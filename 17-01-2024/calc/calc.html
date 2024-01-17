@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>calculator</title>
+  
+  <style>
+    *{
+  margin:0px;
+  padding:0px;
+}
+
+.calculator{
+  width:500px;
+  height:350px;
+  margin:auto;
+  border:1px solid black;  
+  background-color: #191b28;
+  box-shadow:rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
+  margin-top:200px;
+  border-radius:5px;
+}
+button{
+  width:70px;
+  height:65px;
+  background-color:#fb0066;
+  border:0.5px solid black;
+  border-radius:5px;
+  outline:none;
+  color:white;
+  font-size:1.5em;
+}
+input[type=text]{
+  width:400px;
+  height:60px;
+  margin:10px 10px;
+  background-color:#dcdbe1;
+  border:0.5px solid black;
+  border-radius:5px;
+  outline:none;
+  padding-left:3px;
+  font-size:1.5em;
+
+}
+input[type=button]{
+  width:120px;
+  height:60px;
+  margin:1px 1px;
+  color:white;
+  background-color: #64278f;
+  border:0.5px solid black;
+  border-radius:5px;
+  outline:none;
+  font-size:1.5em;
+}
+
+input:active[type=button]{
+  background-color: #e5e5e5;
+  color:black;
+}
+
+button:active{
+  background-color: #e5e5e5;
+  color:black;
+}
+
+input:hover[type=button]{
+  background-color: #191b28;
+}
+
+button:hover{
+  background-color: #191b28;
+}
+  </style>
+</head>
+<body>
+  <form name="calculator" class="calculator">
+    <div class="display">
+      <input type="text" id="display" name="display" readonly disable>
+      
+      <button onclick="calculator.display.value=''"> C </button>
+    </div>
+    <div class="keys">
+      <table>
+        <tr>
+          <tr>
+  
+    <td> <input type="button" value="1" onclick="showDigit('1')" /> </td>
+    <td> <input type="button" value="2" onclick="showDigit('2')" /> </td>
+    <td> <input type="button" value="3" onclick="showDigit('3')" /> </td>
+    <td> <input type="button" value="/" onclick="showDigit('/')" /> </td>
+  </tr>
+  <tr>
+    <td> <input type="button" value="4" onclick="showDigit('4')" /> </td>
+    <td> <input type="button" value="5" onclick="showDigit('5')" /> </td>
+    <td> <input type="button" value="6" onclick="showDigit('6')" /> </td>
+    <td> <input type="button" value="-" onclick="showDigit('-')" /> </td>
+  </tr>
+  <tr>
+    <td> <input type="button" value="7" onclick="showDigit('7')" /> </td>
+    <td> <input type="button" value="8" onclick="showDigit('8')" /> </td>
+    <td> <input type="button" value="9" onclick="showDigit('9')" /> </td>
+    <td> <input type="button" value="+" onclick="showDigit('+')" /> </td>
+  </tr>
+  <tr>
+    <td> <input type="button" value="." onclick="showDigit('.')" /> </td>
+    <td> <input type="button" value="0" onclick="showDigit('0')" /> </td>
+ 
+    <td> <input type="button" value="=" onclick="calculate()" /> </td>
+    <td> <input type="button" value="*" onclick="showDigit('*')" /> </td>
+  </tr>
+      </table>
+    
+    </div>
+  </form>
+  
+  <script>
+    let alreadyCalculated = false;
+    let showResults = "";
+    function showDigit(digit){
+        if(alreadyCalculated == false){
+            document.querySelector("#display").value+=digit;
+            showResults +=digit+"";
+        }
+        else{
+            clearScreen();
+            alreadyCalculated = false;
+            document.querySelector("#display").value+=digit;
+            showResults +=digit+"";
+        }
+    }
+
+    function clearScreen(){
+        document.querySelector('#display').value="";
+        showResults = "";
+    }
+
+    function calculate(){
+        let display =  document.querySelector('#display').value;
+        let result = eval(display);
+        document.querySelector('#display').value = result;
+        alreadyCalculated = true;
+        alert("The result of "+showResults+" is "+result);
+        return alreadyCalculated;
+    }
+
+
+
+  </script>
+</body>
+</html>
