@@ -56,15 +56,12 @@ public class Customer {
 
     public void showLaptops(){
         if(!laptops.isEmpty()){
-            double totalLaptopsPrice = 0;
             System.out.print("Laptops : \n\n========================\n");
             for (Laptop laptop : laptops
             ) {
-                totalLaptopsPrice += laptop.getPrice();
                 System.out.println(laptop.getName());
             }
             System.out.println("\n============================\n");
-            System.out.printf("Total price of Laptops : %.2f", totalLaptopsPrice);
         }
         else{
             System.out.println("There is no Laptops :)");
@@ -73,15 +70,12 @@ public class Customer {
 
     public void showPhones(){
         if(!phones.isEmpty()){
-            double totalPhonesPrice = 0;
             System.out.print("Phones : \n\n========================\n");
             for (Mobile phone : phones
             ) {
-                totalPhonesPrice += phone.getPrice();
                 System.out.println(phone.getName());
             }
             System.out.println("\n============================\n");
-            System.out.printf("Total price of Phones : %.2f", totalPhonesPrice);
         }
         else{
             System.out.println("There is no Phones :)");

@@ -7,9 +7,12 @@ public class Main {
         System.out.println("2 - Phones");
         System.out.println("3 - Show Recite");
         System.out.println("4 - Show Phones in your cart");
-        System.out.println("5 - Show Laptops in your laptop");
-        System.out.println("write anything to Exit");
+        System.out.println("5 - Show Laptops in your cart");
+        System.out.println("6 - Remove Laptop from your cart");
+        System.out.println("7 - Remove Phone from your cart");
+        System.out.println("0 - to Exit");
     }
+
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
         String customerName;
@@ -57,10 +60,28 @@ public class Main {
             else if(option == 5){
                 customer1.showLaptops();
             }
-            else {
-                System.out.println("Thank you");
+            else if (option == 6){
+                customer1.showLaptops();
+                System.out.println("Write what do you want from these to remove by writing its name correctly");
+                String selection = input.next();
+                customer1.removeLaptops(storageShop.getLaptop(selection));
+            }
+            else if (option == 7){
+                customer1.showPhones();
+                System.out.println("Write what do you want from these to remove by writing its name correctly");
+                String selection = input.next();
+                customer1.removePhones(storageShop.getPhone(selection));
+            }
+            else if (option == 0){
+                System.out.println("Thank you :)");
                 break;
             }
+
+            else {
+                System.out.println("Invalid Choice");
+                continue;
+            }
+
             System.out.println("\n=======================================\n");
         }
     }
