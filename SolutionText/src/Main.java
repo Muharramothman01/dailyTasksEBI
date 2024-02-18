@@ -1,19 +1,42 @@
+import java.io.*;
 import java.util.*;
 
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
-        long start = System.currentTimeMillis();
         Scanner input = new Scanner(System.in);
         int total;
         int percentage;
-        String s = "132132123 asas .123It was a good idea. At least, they all thought it was a good idea at the time. Hindsight would reveal that in reality, it was an unbelievably terrible idea, but it would take another week for them to understand that. Right now, at this very moment. they all agreed that it was the perfect course of action for the current situation. It was a concerning development that he couldn't get out of his mind. He'd had many friends throughout his early years and had fond memories of playing with them, but he couldn't understand how it had all stopped. There was some point as he grew up that he played with each of his friends for the very last time, and he had no idea that it would be the last. Eating raw fish didn't sound like a good idea. It's a delicacy in Japan, didn't seem to make it any more appetizing. Raw fish is raw fish, delicacy or not. Why do Americans have so many different types of towels? We have beach towels, hand towels, bath towels, dish towels, camping towels, quick-dry towels, and let’s not forget paper towels. Would 1 type of towel work for each of these things? Let’s take a beach towel. It can be used to dry your hands and body with no difficulty. A beach towel could be used to dry dishes. Just think how many dishes you could dry with one beach towel. I’ve used a beach towel with no adverse effects while camping. If you buy a thin beach towel it can dry quickly too. I’d probably cut up a beach towel to wipe down counters or for cleaning other items, but a full beach towel could be used too. Is having so many types of towels an extravagant luxury that Americans enjoy or is it necessary? I’d say it's overkill, and we could cut down on the many types of towels that manufacturers deem necessary.";
-        //String s = "It was a good idea. At least, least they all thought it was a good idea at the time.";
-        //String s = "  123  ";
-        //String s = "and or";
-        if(s.replaceAll("[ 0-9]+","").equals("")){
+        String path;
+        StringBuilder s = new StringBuilder();
+
+
+        System.out.println("Enter the path : ");
+        path = input.nextLine().replace("\\","\\\\");
+        File file = new File(path);
+        if(!file.exists()){
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        else{
+            try (FileReader fileReader = new FileReader(path);
+                 BufferedReader br = new BufferedReader(fileReader)
+            ){
+                while (br.readLine() != null){
+                       s.append(br.readLine());
+                    System.out.println(s);
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        if(s.toString().replaceAll("[ 0-9]+", "").isEmpty()){
             System.out.println("Wrong Data!");
             return;
         }
@@ -40,11 +63,10 @@ public class Main {
                 "where", "where's", "which", "while", "who", "who's", "whom", "why", "why's", "with", "won't", "would",
                 "wouldn't",
                 "you", "you'd", "you'll", "you're", "you've", "your", "yours", "yourself", "yourselves",""));
-        LinkedList<String> sentencesList = new LinkedList<>(Arrays.asList(s.split("[.?]+")));
+        LinkedList<String> sentencesList = new LinkedList<>(Arrays.asList(s.toString().split("[.?]+")));
         HashMap <String, Integer> wordMap = new HashMap<>();
-        TreeMap <String, Integer> sentenceMap = new TreeMap<>();
-        SortedSet<Map.Entry<String, Integer>> sortedSet = new TreeSet<>(Map.Entry.comparingByValue());
-
+        LinkedHashMap <String, Integer> sentenceMap = new LinkedHashMap<>();
+//        SortedSet<Map.Entry<String, Integer>> sortedSet = new TreeSet<>(Map.Entry.comparingByValue(Comparator.reverseOrder()));
 
         for (String sentence : sentencesList) {
             for (String word : sentence.split("[, 0-9]+")) {
@@ -54,56 +76,76 @@ public class Main {
                 wordMap.put(word, 0);
             }
         }
+        try {
+            if (!wordMap.isEmpty()) {
 
-        if (!wordMap.isEmpty()) {
 
-
-            for (String sentence : sentencesList) {
-                for (Map.Entry<String, Integer> entry : wordMap.entrySet()) {
-                    if(sentence.contains(entry.getKey())){
-                        wordMap.put(entry.getKey(),entry.getValue()+1);
+                for (String sentence : sentencesList) {
+                    for (Map.Entry<String, Integer> entry : wordMap.entrySet()) {
+                        if (sentence.contains(entry.getKey())) {
+                            wordMap.put(entry.getKey(), entry.getValue() + 1);
+                        }
                     }
                 }
-            }
 
 
 //            for (Map.Entry<String, Integer> entry : wordMap.entrySet()) {
 //                System.out.printf("%s : %d\n",entry.getKey(),entry.getValue());
 //            }
 
-            for (String sentence : sentencesList) {
-                int frequency = 0;
-                for (Map.Entry<String, Integer> entry : wordMap.entrySet()) {
-                    if(sentence.contains(entry.getKey())){
-                        frequency+=entry.getValue();
+
+                for (String sentence : sentencesList) {
+                    int frequency = 0;
+                    for (Map.Entry<String, Integer> entry : wordMap.entrySet()) {
+                        if (sentence.contains(entry.getKey())) {
+                            frequency += entry.getValue();
+                        }
+                    }
+                    sentenceMap.put(sentence, frequency);
+                }
+
+                LinkedHashSet<Map.Entry<String, Integer>> set = new LinkedHashSet<>(sentenceMap.entrySet());
+
+                System.out.println("Enter percentage : ");
+                percentage = input.nextInt();
+
+                if(percentage<=100 && percentage>=10) {
+                    try {
+                        for (int i = percentage; i > 0; i-=10) {
+                            String pathTemp = "G:\\results\\data"+i+".txt";
+                            File fileWriting = new File(pathTemp);
+                            int j = 0;
+                            total = (int) ((((double) i) / 100) * set.size());
+                            fileWriting.createNewFile();
+                            FileWriter fileWriter = new FileWriter(pathTemp);
+                            BufferedWriter bw = new BufferedWriter(fileWriter);
+                            while (total != 0) {
+                                //System.out.printf("Sentence %d : %s\n", j, sortedSet.toArray()[j].toString().trim());
+                                try {
+                                    System.out.printf("Sentence %d : %s\n", j, set.toArray()[j].toString().trim());
+                                    bw.write("Sentence "+ (j+1) +" : "+ set.toArray()[j].toString().trim().replaceAll("[=0-9]","").trim());
+                                    bw.newLine();
+                                    ++j;
+                                    --total;
+                                } catch (IOException e) {
+                                    throw new RuntimeException(e);
+                                }
+                            }
+                            bw.close();
+                        }
+
+                    } catch (InputMismatchException e) {
+                        System.out.println("Invalid Input !!!");
                     }
                 }
-                sentenceMap.put(sentence,frequency);
-                //    System.out.printf("%s : %d\n", sentence,frequency);
-            }
-
-            sortedSet.addAll(sentenceMap.entrySet());
-
-            long end = System.currentTimeMillis();
-            System.out.println(end - start);
-
-            percentage = input.nextInt();
-
-            try {
-                total = (int) ((((double)percentage)/100) * sortedSet.size());
-                int i = sortedSet.size()-1;
-                while (total!=0){
-                    System.out.printf("Sentence %d : %s\n",i,sortedSet.toArray()[i].toString().trim().replaceAll("[=0-9]+","").trim());
-                    --i;
-                    --total;
+                else {
+                    throw new SummaryExcpetion(ErrorCode.PERCENTATGEOUTOFRANGE);
                 }
-            } catch (InputMismatchException e) {
-                System.out.println("Invalid Input !!!");
+            } else {
+                throw new SummaryExcpetion(ErrorCode.EMPTYWORDLIST);
             }
-
-        }else {
-            System.out.println("There is only stop words here !!");
+        }catch (SummaryExcpetion e){
+            System.out.println(e.getMessage());
         }
-
     }
 }
