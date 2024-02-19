@@ -1,5 +1,7 @@
 import java.io.*;
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
@@ -11,7 +13,6 @@ public class Main {
         int percentage;
         String path;
         StringBuilder s = new StringBuilder();
-
 
         System.out.println("Enter the path : ");
         path = input.nextLine().replace("\\","\\\\");
@@ -27,8 +28,9 @@ public class Main {
             try (FileReader fileReader = new FileReader(path);
                  BufferedReader br = new BufferedReader(fileReader)
             ){
-                while (br.readLine() != null){
-                       s.append(br.readLine());
+                String line;
+                while ((line = br.readLine()) != null){
+                       s.append(line);
                     System.out.println(s);
                 }
             } catch (IOException e) {
@@ -40,6 +42,7 @@ public class Main {
             System.out.println("Wrong Data!");
             return;
         }
+
         HashSet <String> stopWordsSet = new HashSet<>(Arrays.asList(
                 "a", "about", "above", "after", "again", "against", "all", "am", "an", "and", "any", "are", "aren't", "as", "at",
                 "be", "because", "been", "before", "being", "below", "between", "both", "but", "by",
@@ -66,7 +69,11 @@ public class Main {
         LinkedList<String> sentencesList = new LinkedList<>(Arrays.asList(s.toString().split("[.?]+")));
         HashMap <String, Integer> wordMap = new HashMap<>();
         LinkedHashMap <String, Integer> sentenceMap = new LinkedHashMap<>();
+        LinkedList<String> unsortedList,sortedList;
+
+
 //        SortedSet<Map.Entry<String, Integer>> sortedSet = new TreeSet<>(Map.Entry.comparingByValue(Comparator.reverseOrder()));
+//        LinkedHashMap <String, Integer> sortedHashMap;
 
         for (String sentence : sentencesList) {
             for (String word : sentence.split("[, 0-9]+")) {
@@ -76,6 +83,15 @@ public class Main {
                 wordMap.put(word, 0);
             }
         }
+//
+//        sentencesList.stream()
+//                .map(sentence -> sentence.split("[, 0-9]+"))
+//                .flatMap(Arrays::stream)
+//                .filter(word->!stopWordsSet.contains(word.trim().toLowerCase()))
+//                .collect(Collectors.toMap(
+//
+//                ));
+
         try {
             if (!wordMap.isEmpty()) {
 
@@ -89,11 +105,6 @@ public class Main {
                 }
 
 
-//            for (Map.Entry<String, Integer> entry : wordMap.entrySet()) {
-//                System.out.printf("%s : %d\n",entry.getKey(),entry.getValue());
-//            }
-
-
                 for (String sentence : sentencesList) {
                     int frequency = 0;
                     for (Map.Entry<String, Integer> entry : wordMap.entrySet()) {
@@ -104,7 +115,20 @@ public class Main {
                     sentenceMap.put(sentence, frequency);
                 }
 
-                LinkedHashSet<Map.Entry<String, Integer>> set = new LinkedHashSet<>(sentenceMap.entrySet());
+                unsortedList = new LinkedList<>(sentenceMap.keySet());
+                sortedList = sentenceMap.entrySet()
+                        .stream()
+                        .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                        .map(Map.Entry::getKey)
+                        .collect(Collectors.toCollection(LinkedList::new));
+
+
+//                sortedSet.addAll(sentenceMap.entrySet());
+//                LinkedHashSet<Map.Entry<String, Integer>> set = new LinkedHashSet<>(sentenceMap.entrySet());
+//                sortedList = new LinkedList<>(sortedHashMap.keySet());
+
+                System.out.println(unsortedList.size());
+                System.out.println(sortedList.size());
 
                 System.out.println("Enter percentage : ");
                 percentage = input.nextInt();
@@ -114,19 +138,22 @@ public class Main {
                         for (int i = percentage; i > 0; i-=10) {
                             String pathTemp = "G:\\results\\data"+i+".txt";
                             File fileWriting = new File(pathTemp);
-                            int j = 0;
-                            total = (int) ((((double) i) / 100) * set.size());
+                            total = (int) ((((double) i) / 100) * unsortedList.size());
                             fileWriting.createNewFile();
                             FileWriter fileWriter = new FileWriter(pathTemp);
                             BufferedWriter bw = new BufferedWriter(fileWriter);
-                            while (total != 0) {
-                                //System.out.printf("Sentence %d : %s\n", j, sortedSet.toArray()[j].toString().trim());
+                            ArrayList<Integer> indexes = new ArrayList<>();
+                            for (int k = 0; k < total; k++) {
+                                indexes.add(sortedList.indexOf(sortedList.get(k)));
+                            }
+                            Collections.sort(indexes);
+                            System.out.println(indexes);
+                            int count = 0;
+                            for (Integer index : indexes) {
                                 try {
-                                    System.out.printf("Sentence %d : %s\n", j, set.toArray()[j].toString().trim());
-                                    bw.write("Sentence "+ (j+1) +" : "+ set.toArray()[j].toString().trim().replaceAll("[=0-9]","").trim());
+                                    //System.out.printf("Sentence %d : %s\n", j, unsortedList.get(j).trim());
+                                    bw.write("Sentence "+ (count+1) +" : "+ unsortedList.get(index).trim());
                                     bw.newLine();
-                                    ++j;
-                                    --total;
                                 } catch (IOException e) {
                                     throw new RuntimeException(e);
                                 }
