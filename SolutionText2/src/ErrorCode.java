@@ -1,0 +1,6 @@
+public enum ErrorCode {
+    EMPTYSTRING,
+    EMPTYWORDLIST,
+    PERCENTATGEOUTOFRANGE,
+    EMPTYPATH
+}
