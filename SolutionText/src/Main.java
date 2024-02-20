@@ -1,10 +1,8 @@
 import java.io.*;
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+
 public class Main {
     public static void main(String[] args) throws IOException {
 
@@ -16,6 +14,7 @@ public class Main {
 
         System.out.println("Enter the path : ");
         path = input.nextLine().replace("\\","\\\\");
+
         File file = new File(path);
         if(!file.exists()){
             try {
@@ -31,7 +30,6 @@ public class Main {
                 String line;
                 while ((line = br.readLine()) != null){
                        s.append(line);
-                    System.out.println(s);
                 }
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -72,49 +70,29 @@ public class Main {
         LinkedList<String> unsortedList,sortedList;
 
 
-//        SortedSet<Map.Entry<String, Integer>> sortedSet = new TreeSet<>(Map.Entry.comparingByValue(Comparator.reverseOrder()));
-//        LinkedHashMap <String, Integer> sortedHashMap;
-
-        for (String sentence : sentencesList) {
-            for (String word : sentence.split("[, 0-9]+")) {
-                if (stopWordsSet.contains(word.trim().toLowerCase())) {
-                    continue;
-                }
-                wordMap.put(word, 0);
-            }
-        }
-//
-//        sentencesList.stream()
-//                .map(sentence -> sentence.split("[, 0-9]+"))
-//                .flatMap(Arrays::stream)
-//                .filter(word->!stopWordsSet.contains(word.trim().toLowerCase()))
-//                .collect(Collectors.toMap(
-//
-//                ));
+        sentencesList.forEach(
+                sentence -> Arrays.stream(sentence.split("[, 0-9]+"))
+                        .filter(word -> !stopWordsSet.contains(word.trim().toLowerCase()))
+                        .forEach(word -> wordMap.put(word,0))
+        );
 
         try {
             if (!wordMap.isEmpty()) {
 
+                sentencesList.forEach(sentence ->
+                        wordMap.entrySet()
+                                .stream()
+                                .filter(entry -> sentence.contains(entry.getKey()))
+                                .forEach(entry -> wordMap.put(entry.getKey(), entry.getValue()+1))
+                );
 
-                for (String sentence : sentencesList) {
-                    for (Map.Entry<String, Integer> entry : wordMap.entrySet()) {
-                        if (sentence.contains(entry.getKey())) {
-                            wordMap.put(entry.getKey(), entry.getValue() + 1);
-                        }
-                    }
-                }
-
-
-                for (String sentence : sentencesList) {
-                    int frequency = 0;
-                    for (Map.Entry<String, Integer> entry : wordMap.entrySet()) {
-                        if (sentence.contains(entry.getKey())) {
-                            frequency += entry.getValue();
-                        }
-                    }
-                    sentenceMap.put(sentence, frequency);
-                }
-
+                sentencesList.forEach(sentence ->
+                                wordMap.entrySet()
+                                        .stream()
+                                        .filter(entry -> sentence.contains(entry.getKey()))
+                                        .forEach(entry -> sentenceMap.put(sentence,wordMap.get(entry.getKey())+sentenceMap.getOrDefault(sentence,0)))
+                );
+                
                 unsortedList = new LinkedList<>(sentenceMap.keySet());
                 sortedList = sentenceMap.entrySet()
                         .stream()
@@ -123,36 +101,46 @@ public class Main {
                         .collect(Collectors.toCollection(LinkedList::new));
 
 
-//                sortedSet.addAll(sentenceMap.entrySet());
-//                LinkedHashSet<Map.Entry<String, Integer>> set = new LinkedHashSet<>(sentenceMap.entrySet());
-//                sortedList = new LinkedList<>(sortedHashMap.keySet());
-
-                System.out.println(unsortedList.size());
-                System.out.println(sortedList.size());
-
                 System.out.println("Enter percentage : ");
                 percentage = input.nextInt();
 
                 if(percentage<=100 && percentage>=10) {
-                    try {
+
+                    for (int i = 100; i > 0; i-=10) {
+                        String pathTemp = "D:\\results\\data" + i + ".txt";
+                        File fileWriting = new File(pathTemp);
+                        if(fileWriting.exists())
+                            fileWriting.delete();
+                    }
+
+                        try {
                         for (int i = percentage; i > 0; i-=10) {
-                            String pathTemp = "G:\\results\\data"+i+".txt";
+
+                            String pathTemp = "D:\\results\\data"+i+".txt";
                             File fileWriting = new File(pathTemp);
+
                             total = (int) ((((double) i) / 100) * unsortedList.size());
+
                             fileWriting.createNewFile();
                             FileWriter fileWriter = new FileWriter(pathTemp);
                             BufferedWriter bw = new BufferedWriter(fileWriter);
+
                             ArrayList<Integer> indexes = new ArrayList<>();
+
                             for (int k = 0; k < total; k++) {
-                                indexes.add(sortedList.indexOf(sortedList.get(k)));
+                                indexes.add(unsortedList.indexOf(sortedList.get(k)));
                             }
+
                             Collections.sort(indexes);
-                            System.out.println(indexes);
+
+//                          System.out.println(indexes);
+
                             int count = 0;
+
                             for (Integer index : indexes) {
                                 try {
                                     //System.out.printf("Sentence %d : %s\n", j, unsortedList.get(j).trim());
-                                    bw.write("Sentence "+ (count+1) +" : "+ unsortedList.get(index).trim());
+                                    bw.write("Sentence "+ (++count) +" : "+ unsortedList.get(index).trim());
                                     bw.newLine();
                                 } catch (IOException e) {
                                     throw new RuntimeException(e);
