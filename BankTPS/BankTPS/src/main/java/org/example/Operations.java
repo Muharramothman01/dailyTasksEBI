@@ -7,31 +7,28 @@ import java.util.*;
 
 
 public abstract class  Operations {
+    private static ArrayList<String> dataSheet=new ArrayList<>();
     private static ArrayList<String> accountDetails ;
     private static ArrayList<Account> accounts ;
     public static void start() {
         try {
-            List<String> dataSheet = new ArrayList<>(Operations.showBalanceSheet());
+            dataSheet = (ArrayList<String>) Operations.showBalanceSheet();
             accountDetails = new ArrayList<>();
             accounts = new ArrayList<>();
             if (dataSheet.isEmpty()) {
-                System.out.println("No Accounts yet!!" +
-                                    "\n Create Account");
-
+                System.out.println("No Accounts yet; Create Account");
                 Operations.createNewAccount();
+//            dataSheet.add(Operations.showBalanceSheet().toString());
             }
-
             dataSheet.stream().filter(a -> !a.equalsIgnoreCase("null")).forEach(a ->
                     accountDetails.add(Arrays.toString(a.split(",")))
             );
-
             for (String accountDetail : accountDetails) {
                 accountDetail= accountDetail.replace("[","").replace("]","");
                 accounts.add(new Account(accountDetail.split(",")[0].trim(),
                         accountDetail.split(",")[1].trim(),
                         Double.parseDouble(accountDetail.split(",")[2].trim())));
             }
-
         }catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -101,6 +98,22 @@ public abstract class  Operations {
         accounts.add(new Account(name,uniqueID,Double.parseDouble(balance)));
     }
 
+    public static void createNewAccount(String uniqueID) throws IOException {
+        uniqueID = uniqueID.replaceAll("\\D+","").trim();
+        Scanner scanner = new Scanner(System.in);
+        FileWriter fw = new FileWriter("bankentry.txt",true);
+        BufferedWriter bw = new BufferedWriter(fw);
+        System.out.println("enter account holder name");
+        String name =scanner.next();
+        bw.write(name+","+uniqueID+",");
+        System.out.println("enter account balance");
+        String balance = scanner.next();
+        bw.write(balance);
+        bw.newLine();
+        bw.close();
+        fw.close();
+        accounts.add(new Account(name,uniqueID,Double.parseDouble(balance)));
+    }
     public static void updateData(List<Account> accounts) throws IOException {
 
         FileWriter fw =new FileWriter("bankentry.txt");
