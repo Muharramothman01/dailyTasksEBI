@@ -22,7 +22,7 @@ public class Account {
         }
         balance+=amount;
         successesTransaction++;
-        System.out.println(balance);
+        System.out.println("Your current balance : "+balance);
     }
 
     public void withdraw(double amount) throws BankException {
@@ -37,7 +37,7 @@ public class Account {
 
         balance-= amount;
         successesTransaction++;
-        System.out.println(balance);
+        System.out.println("Your current balance : "+balance);
     }
 
 

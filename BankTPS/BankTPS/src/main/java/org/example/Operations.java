@@ -7,18 +7,17 @@ import java.util.*;
 
 
 public abstract class  Operations {
-    private static ArrayList<String> dataSheet=new ArrayList<>();
+    private static ArrayList<String> dataSheet;
     private static ArrayList<String> accountDetails ;
     private static ArrayList<Account> accounts ;
-    public static void start() {
-        try {
-            dataSheet = (ArrayList<String>) Operations.showBalanceSheet();
+    public static void start() throws IOException {
+
+            dataSheet = new ArrayList<>(Operations.showBalanceSheet());
             accountDetails = new ArrayList<>();
             accounts = new ArrayList<>();
             if (dataSheet.isEmpty()) {
-                System.out.println("No Accounts yet; Create Account");
+                System.out.println("No Accounts yet;\nPlease Create Account");
                 Operations.createNewAccount();
-//            dataSheet.add(Operations.showBalanceSheet().toString());
             }
             dataSheet.stream().filter(a -> !a.equalsIgnoreCase("null")).forEach(a ->
                     accountDetails.add(Arrays.toString(a.split(",")))
@@ -29,9 +28,6 @@ public abstract class  Operations {
                         accountDetail.split(",")[1].trim(),
                         Double.parseDouble(accountDetail.split(",")[2].trim())));
             }
-        }catch (IOException e) {
-            throw new RuntimeException(e);
-        }
 
     }
     public static List<String> showBalanceSheet() throws IOException {
@@ -39,8 +35,8 @@ public abstract class  Operations {
     }
     public static void journal(Account account) throws IOException {
         Scanner scanner = new Scanner(System.in);
+        System.out.println("hello : "+account.getName());
         while (true){
-            System.out.println("hello "+account.getName());
 
             System.out.println("Enter the operation\n" +
                     "1 - to credit(deposit)\n" +
@@ -87,35 +83,37 @@ public abstract class  Operations {
         FileWriter fw = new FileWriter("bankentry.txt",true);
         BufferedWriter bw = new BufferedWriter(fw);
         System.out.println("enter account holder name");
-        String name =scanner.next();
+        String name = scanner.nextLine();
         bw.write(name+","+uniqueID+",");
         System.out.println("enter account balance");
-        String balance = scanner.next();
-        bw.write(balance);
+        double balance = scanner.nextDouble();
+        bw.write(balance+"".trim());
         bw.newLine();
         bw.close();
         fw.close();
-        accounts.add(new Account(name,uniqueID,Double.parseDouble(balance)));
+        System.out.println("account created successfully");
+        accounts.add(new Account(name,uniqueID,balance));
     }
 
-    public static void createNewAccount(String uniqueID) throws IOException {
-        uniqueID = uniqueID.replaceAll("\\D+","").trim();
+    public static Account createNewAccount(String id) throws IOException {
         Scanner scanner = new Scanner(System.in);
         FileWriter fw = new FileWriter("bankentry.txt",true);
         BufferedWriter bw = new BufferedWriter(fw);
         System.out.println("enter account holder name");
-        String name =scanner.next();
-        bw.write(name+","+uniqueID+",");
+        String name =scanner.nextLine();
+        bw.write(name+","+id+",");
         System.out.println("enter account balance");
-        String balance = scanner.next();
-        bw.write(balance);
+        double balance = scanner.nextDouble();
+        bw.write(balance+"".trim());
         bw.newLine();
         bw.close();
         fw.close();
-        accounts.add(new Account(name,uniqueID,Double.parseDouble(balance)));
+        System.out.println("account created successfully");
+        Account account =new Account(name,id,balance);
+        accounts.add(account);
+        return account;
     }
     public static void updateData(List<Account> accounts) throws IOException {
-
         FileWriter fw =new FileWriter("bankentry.txt");
         BufferedWriter bw =new BufferedWriter(fw);
         for (Account account : accounts) {
