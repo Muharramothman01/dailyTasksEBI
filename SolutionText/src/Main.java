@@ -106,21 +106,26 @@ public class Main {
 
                 if(percentage<=100 && percentage>=10) {
 
+                    String dirTemp = "results";
+                    File folder = new File(dirTemp);
+
+                    if(!folder.exists()){
+                        folder.mkdir();
+                    }
+
                     for (int i = 100; i > 0; i-=10) {
-                        String pathTemp = "D:\\results\\data" + i + ".txt";
+                        String pathTemp = dirTemp+"\\data"+i+"%.txt";
                         File fileWriting = new File(pathTemp);
                         if(fileWriting.exists())
                             fileWriting.delete();
                     }
 
-                        try {
+                    try {
                         for (int i = percentage; i > 0; i-=10) {
-
-                            String pathTemp = "D:\\results\\data"+i+".txt";
-                            File fileWriting = new File(pathTemp);
-
                             total = (int) ((((double) i) / 100) * unsortedList.size());
 
+                            String pathTemp = dirTemp+"\\data"+i+"%.txt";
+                            File fileWriting = new File(pathTemp);
                             fileWriting.createNewFile();
                             FileWriter fileWriter = new FileWriter(pathTemp);
                             BufferedWriter bw = new BufferedWriter(fileWriter);
@@ -133,13 +138,11 @@ public class Main {
 
                             Collections.sort(indexes);
 
-//                          System.out.println(indexes);
 
                             int count = 0;
 
                             for (Integer index : indexes) {
                                 try {
-                                    //System.out.printf("Sentence %d : %s\n", j, unsortedList.get(j).trim());
                                     bw.write("Sentence "+ (++count) +" : "+ unsortedList.get(index).trim());
                                     bw.newLine();
                                 } catch (IOException e) {
