@@ -7,13 +7,12 @@ public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
-
-        while (true) {
             try {
                 Operations.start();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
+        while (true) {
             System.out.println("Choose what do you want from these operations \n" +
                     "1- Journal \n" +
                     "2- Balance sheet \n" +
@@ -37,14 +36,11 @@ public class Main {
                     if (!first.isPresent()){
                         System.out.println("account number doesn't exist");
                         System.out.println("Create an account with this account number");
-
-                        first.ifPresent(account1 -> {
-                            try {
-                                Operations.journal(Operations.createNewAccount(accountNo));
-                            } catch (IOException e) {
-                                throw new RuntimeException(e);
-                            }
-                        });
+                        try {
+                            Operations.journal(Operations.createNewAccount(accountNo));
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
                     }
                     else {
                         first.ifPresent(account1 -> {
@@ -80,7 +76,7 @@ public class Main {
 
                 case "4":
                     System.out.println("-------------------");
-                    Operations.namesWithHighest(Operations.getAccounts());
+                    Operations.namesWithHighest();
                     break;
 
                 case "5":
@@ -96,10 +92,8 @@ public class Main {
                         throw new RuntimeException(e);
                     }
                     break;
-
                 default:
                     System.out.println("Enter a valid choice !");
-
             }
         }
         System.out.println("Thank you!!");

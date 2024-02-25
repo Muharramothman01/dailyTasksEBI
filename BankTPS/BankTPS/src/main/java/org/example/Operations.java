@@ -4,17 +4,13 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
-
-
 public abstract class  Operations {
-    private static ArrayList<String> dataSheet;
-    private static ArrayList<String> accountDetails ;
-    private static ArrayList<Account> accounts ;
-    public static void start() throws IOException {
+    private static List<String> dataSheet = new ArrayList<>();;
+    private static ArrayList<String> accountDetails  = new ArrayList<>();
+    private static ArrayList<Account> accounts = new ArrayList<>();
 
-            dataSheet = new ArrayList<>(Operations.showBalanceSheet());
-            accountDetails = new ArrayList<>();
-            accounts = new ArrayList<>();
+    public static void start() throws IOException {
+        dataSheet=  showBalanceSheet();
             if (dataSheet.isEmpty()) {
                 System.out.println("No Accounts yet;\nPlease Create Account");
                 Operations.createNewAccount();
@@ -28,7 +24,6 @@ public abstract class  Operations {
                         accountDetail.split(",")[1].trim(),
                         Double.parseDouble(accountDetail.split(",")[2].trim())));
             }
-
     }
     public static List<String> showBalanceSheet() throws IOException {
         return Files.readAllLines(Paths.get("bankentry.txt"));
@@ -37,12 +32,10 @@ public abstract class  Operations {
         Scanner scanner = new Scanner(System.in);
         System.out.println("hello : "+account.getName());
         while (true){
-
             System.out.println("Enter the operation\n" +
                     "1 - to credit(deposit)\n" +
                     "2 - to debit(withdraw)\n" +
                     "3 - exit");
-
             String input =scanner.next();
             if (input.equalsIgnoreCase("exit")||input.equalsIgnoreCase("3")) break;
             try {
@@ -50,12 +43,12 @@ public abstract class  Operations {
                     case "1":
                         System.out.println("enter amount to Credit");
                         account.deposit(scanner.nextDouble());
-                        updateData(accounts);
+                        updateData();
                         break;
                     case "2":
                         System.out.println("enter amount to Debit");
                         account.withdraw(scanner.nextDouble());
-                        updateData(accounts);
+                        updateData();
                         break;
                     default:
                         System.out.println("enter a valid input");
@@ -66,7 +59,7 @@ public abstract class  Operations {
         }
     }
 
-    public static void namesWithHighest(List<Account> accounts){
+    public static void namesWithHighest(){
         accounts.stream()
                 .sorted(Comparator.comparing(Account::getBalance).reversed()).limit(5)
                 .forEach(account -> System.out.println(
@@ -94,7 +87,6 @@ public abstract class  Operations {
         System.out.println("account created successfully");
         accounts.add(new Account(name,uniqueID,balance));
     }
-
     public static Account createNewAccount(String id) throws IOException {
         Scanner scanner = new Scanner(System.in);
         FileWriter fw = new FileWriter("bankentry.txt",true);
@@ -113,7 +105,7 @@ public abstract class  Operations {
         accounts.add(account);
         return account;
     }
-    public static void updateData(List<Account> accounts) throws IOException {
+    public static void updateData() throws IOException {
         FileWriter fw =new FileWriter("bankentry.txt");
         BufferedWriter bw =new BufferedWriter(fw);
         for (Account account : accounts) {
@@ -123,9 +115,7 @@ public abstract class  Operations {
         bw.close();
         fw.close();
     }
-
     public static ArrayList<Account> getAccounts() {
         return accounts;
     }
-
 }

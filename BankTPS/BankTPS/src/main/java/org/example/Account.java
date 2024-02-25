@@ -9,7 +9,6 @@ public class Account {
 
     private Account() {
     }
-
     public Account(String name, String accountNO, double balance) {
         this.name = name;
         this.accountNO = accountNO;
@@ -39,8 +38,6 @@ public class Account {
         successesTransaction++;
         System.out.println("Your current balance : "+balance);
     }
-
-
 
     public String getName() {
         return name;
@@ -72,5 +69,14 @@ public class Account {
 
     public static int getFailedTransaction() {
         return failedTransaction;
+    }
+
+    @Override
+    public String toString() {
+        return "Account{" +
+                "name='" + name + '\'' +
+                ", accountNO='" + accountNO + '\'' +
+                ", balance=" + balance +
+                '}';
     }
 }
